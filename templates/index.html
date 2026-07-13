@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SupplyWise - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff9900;
+      --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-gradient);
+      color: #333;
+    }
+
+    .navbar {
+      background-color: #131921;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .navbar h1 {
+      font-size: 28px;
+      color: var(--primary-color);
+      letter-spacing: 1px;
+    }
+
+    .search-bar {
+      flex-grow: 1;
+      display: flex;
+      max-width: 500px;
+      margin: 0 30px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 10px 16px;
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      border-radius: 0 8px 8px 0;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #ff7f00;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    .flash-messages {
+      margin: 20px;
+    }
+
+    .flash {
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .flash-success {
+      background-color: #d1f0d1;
+      color: #1e4620;
+    }
+
+    .flash-error {
+      background-color: #fcdede;
+      color: #741c1c;
+    }
+
+    .hero {
+      padding: 60px 20px;
+      text-align: center;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      color: #333;
+    }
+
+    .hero h2 {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .categories-section {
+      padding: 40px 30px;
+      background-color: #fff;
+      border-radius: 20px 20px 0 0;
+      box-shadow: var(--shadow);
+    }
+
+    .categories-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .categories-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .category-box {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      width: 180px;
+      transition: transform 0.3s;
+    }
+
+    .category-box i {
+      font-size: 36px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .category-box span {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      text-align: center;
+      font-weight: 800;
+      margin-top: 40px;
+      color: #222;
+    }
+
+    .products-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: 30px;
+    }
+
+    .product-box {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      width: 280px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s;
+    }
+
+    .product-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-box h3 {
+      font-size: 20px;
+      color: #222;
+    }
+
+    .product-box p {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .product-box button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .product-box button:hover {
+      background-color: #f19000;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-bar {
+        flex-direction: column;
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .search-bar input,
+      .search-bar button {
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      .categories-container,
+      .products-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <div class="navbar">
+    <h1>SupplyWise</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search products...">
+      <button onclick="performSearch()">Search</button>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('register') }}">Register</a>
+      <a href="{{ url_for('login') }}">Login</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h2>Welcome to SupplyWise</h2>
+    <p>Efficient. Transparent. Reliable. Empowering Customers, Retailers, and Transporters across the supply chain.</p>
+  </div>
+
+  <!-- Top Categories -->
+  <div class="categories-section">
+    <div class="categories-title">OUR KEY FEATURES</div>
+    <div class="categories-container">
+      <div class="category-box">
+        <i class="fas fa-boxes"></i>
+        <span>Efficient Stock Management</span>
+      </div>
+      <div class="category-box">
+        <i class="fas fa-truck"></i>
+        <span>Seamless Delivery & Tracking</span>
+      </div>
+      <div class="category-box">
+        <i class="fas fa-cart-plus"></i>
+        <span>Smart Retail Solutions</span>
+      </div>
+      <div class="category-box">
+        <i class="fas fa-industry"></i>
+        <span>Optimized Production Flow</span>
+      </div>
+      <div class="category-box">
+        <i class="fas fa-recycle"></i>
+        <span>Sustainable Waste Handling</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Listing -->
+  <div class="section-title">Available Products</div>
+  <div class="products-container" id="productsContainer">
+    {% for product in products %}
+    <div class="product-box" data-name="{{ product.name }}">
+      <h3>{{ product.name }}</h3>
+      <p><strong>Company:</strong> {{ product.company }}</p>
+      <p><strong>Category:</strong> {{ product.category }}</p>
+      <p><strong>Description:</strong> {{ product.description }}</p>
+      <form action="{{ url_for('login') }}">
+        <button type="submit">Buy Now</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function performSearch() {
+      const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+      const productsContainer = document.getElementById("productsContainer");
+      const productBoxes = productsContainer.getElementsByClassName("product-box");
+
+      for (let i = 0; i < productBoxes.length; i++) {
+        const productName = productBoxes[i].getAttribute("data-name").toLowerCase();
+        if (productName.includes(searchQuery)) {
+          productBoxes[i].style.display = "block";
+        } else {
+          productBoxes[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>

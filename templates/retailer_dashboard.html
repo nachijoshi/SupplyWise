@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Retailer Dashboard</title>
+    <style>
+      :root {
+        --primary-color: #ff9900;
+        --dark-color: #131921;
+        --bg-color: #f4f6fa;
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-color);
+        color: #333;
+      }
+
+      .top-bar {
+        background-color: var(--dark-color);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .top-bar h1 {
+        font-size: 28px;
+      }
+
+      .cart-btn {
+        background-color: var(--primary-color);
+        color: black;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background 0.3s ease;
+        margin-left: 10px;
+      }
+
+      .cart-btn:hover {
+        background-color: #e68a00;
+      }
+      .notifications {
+  background: white;
+  padding: 20px 40px;
+  margin: 0 40px 40px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.notifications h2 {
+  color: var(--dark-color);
+  margin-bottom: 15px;
+  border-left: 6px solid var(--primary-color);
+  padding-left: 12px;
+}
+
+.notifications ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notifications li {
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+  color: #444;
+  font-size: 15px;
+}
+
+.notifications li:last-child {
+  border-bottom: none;
+}
+
+.notifications small {
+  display: block;
+  color: #888;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+      .notification-box {
+        margin: 30px;
+        padding: 25px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+      }
+
+      .notification-box h3 {
+        font-size: 20px;
+        color: var(--dark-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+
+      .notification-item {
+        border-bottom: 1px solid #ddd;
+        padding: 12px 0;
+      }
+
+      .notification-item:last-child {
+        border-bottom: none;
+      }
+
+      .notification-item strong {
+        color: #555;
+      }
+
+      .notification-item span {
+        display: block;
+        color: #444;
+        margin-top: 4px;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--glass-bg);
+        color: #000;
+        border-left: 6px solid var(--primary-color);
+        padding: 18px 24px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        z-index: 999;
+        min-width: 280px;
+      }
+
+      .toast .close-btn {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #000;
+      }
+
+      h2 {
+        color: var(--dark-color);
+        margin: 40px 0 20px 40px;
+        border-left: 6px solid var(--primary-color);
+        padding-left: 12px;
+      }
+
+      .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 0 40px 40px;
+        justify-content: flex-start;
+      }
+
+      .product-box {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        width: 280px;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease;
+      }
+
+      .product-box:hover {
+        transform: translateY(-5px);
+      }
+
+      .product-box h3 {
+        margin-bottom: 10px;
+        color: var(--dark-color);
+      }
+
+      .product-box p {
+        margin: 6px 0;
+      }
+
+      .product-box form {
+        margin-top: 10px;
+      }
+
+      .product-box input[type="number"] {
+        width: 70px;
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      .product-box button {
+        background-color: var(--primary-color);
+        color: black;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 12px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .product-box button:hover {
+        background-color: #e68a00;
+      }
+
+      table {
+        width: 90%;
+        margin: 30px auto;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: var(--shadow);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: var(--dark-color);
+        color: white;
+      }
+
+      .btn {
+        background-color: #28a745;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #218838;
+      }
+      .quote {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 22px;
+        font-weight: bold;
+        color: #ffcc66;
+        margin-top: 4px;
+        letter-spacing: 0.6px;
+      }
+
+      /* Date Filter Styles */
+      .date-filter {
+        background: white;
+        padding: 20px;
+        margin: 0 40px 20px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .date-filter label {
+        font-weight: bold;
+        color: var(--dark-color);
+      }
+
+      .date-filter input[type="date"] {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-family: inherit;
+      }
+
+      .date-filter button {
+        background-color: var(--primary-color);
+        color: black;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .date-filter button:hover {
+        background-color: #e68a00;
+      }
+
+      .clear-btn {
+        background-color: #f4f6fa;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      /* Sales Summary */
+      .sales-summary {
+        background: white;
+        padding: 20px;
+        margin: 0 40px 20px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .summary-item {
+        text-align: center;
+      }
+
+      .summary-item h3 {
+        color: var(--dark-color);
+        margin-bottom: 5px;
+      }
+
+      .summary-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      @media (max-width: 768px) {
+        .product-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .product-box {
+          width: 90%;
+        }
+
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 20px;
+        }
+
+        .top-bar div {
+          margin-top: 10px;
+        }
+
+        .date-filter {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .sales-summary {
+          flex-direction: column;
+          gap: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div>
+        <h1>Welcome, Retailer</h1>
+        <div class="quote">"Supply with excellence, deliver with pride."</div>
+      </div>
+
+      <div>
+        <a href="{{ url_for('cart') }}" class="cart-btn"> View Cart</a>
+        <a href="#notifications" class="cart-btn">Notifications</a>
+        <a href="{{ url_for('logout') }}" class="cart-btn">Logout</a>
+      </div>
+    </div>
+
+    <!-- Flash Message Toast -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="toast" id="toast">
+      {{ message }}
+      <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <h2>Inventory</h2>
+    <div class="product-container">
+      {% for item in inventory %}
+      <div class="product-box">
+        <h3>{{ item.product_name }}</h3>
+        <p>
+          <strong>Supplier:</strong> {{ item.owner_name if item.owner_name else
+          'N/A' }}
+        </p>
+        <p><strong>Stock:</strong> {{ item.stock_qty }}</p>
+        <p><strong>Price:</strong> ₹{{ item.sell_price }}</p>
+
+        <!-- Add to Cart Form -->
+        <form method="POST" action="{{ url_for('add_to_cart') }}">
+          <input
+            type="hidden"
+            name="product_id"
+            value="{{ item.product_id }}"
+          />
+          <input
+            type="hidden"
+            name="product_name"
+            value="{{ item.product_name }}"
+          />
+          <input
+            type="hidden"
+            name="inventory_id"
+            value="{{ item.inventory_id }}"
+          />
+          <input type="hidden" name="price" value="{{ item.sell_price }}" />
+          <label>Qty:</label>
+          <input
+            type="number"
+            name="quantity"
+            min="1"
+            max="{{ item.stock_qty }}"
+            value="1"
+            required
+          />
+          <button type="submit">Add to Cart</button>
+        </form>
+
+        <div class="feedback-section">
+          <form method="POST" action="{{ url_for('submit_feedback') }}">
+            <input
+              type="hidden"
+              name="inventory_id"
+              value="{{ item.inventory_id }}"
+            />
+            <label for="rating_{{ item.inventory_id }}"
+              >Rate this product:</label
+            >
+            <select name="rating_{{ item.inventory_id }}" required>
+              <option value="1">1 Star</option>
+              <option value="2">2 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
+            </select>
+            <button type="submit">Submit Rating</button>
+          </form>
+
+          <!-- Display Star Rating -->
+          <div class="stars">
+            {% set avg_rating = item.avg_rating %} {% for i in range(5) %}
+            <span class="filled" {% if i
+              >= avg_rating %} style="color: #ccc;" {% endif %}>★</span
+            >
+            {% endfor %}
+            <p>{{ avg_rating | round(1) }} / 5</p>
+            <p>{{ item.feedback_count }} feedbacks</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h2>Your Inventory (Edit Prices and Quantity)</h2>
+    <div class="product-container">
+        {% for item in retailer_inventory %}
+        <div class="product-box">
+            <h3>{{ item.product_name }}</h3>
+            <p><strong>Stock:</strong> {{ item.stock_qty }}</p>
+            
+            <!-- Update Price Form -->
+            <form method="POST" action="{{ url_for('update_price') }}">
+                <input type="hidden" name="inventory_id" value="{{ item.inventory_id }}">
+                <label>Price:</label>
+                <input type="number" step="0.01" name="new_price" value="{{ item.sell_price }}" required>
+                <button type="submit">Update Price</button>
+            </form>
+
+            <!-- Update Quantity Form -->
+            <form method="POST" action="{{ url_for('update_quantity') }}">
+                <input type="hidden" name="inventory_id" value="{{ item.inventory_id }}">
+                <label>Quantity:</label>
+                <input type="number" min="0" name="new_quantity" value="{{ item.stock_qty }}" required>
+                <button type="submit">Update Quantity</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <!-- Single Date Filter for both Invoices and Sales Report -->
+    <h2>Sales Reports</h2>
+    <div class="date-filter">
+      <form method="GET" action="{{ url_for('retailer_dashboard') }}">
+        <label for="start_date">From:</label>
+        <input
+          type="date"
+          id="start_date"
+          name="start_date"
+          value="{{ start_date if start_date else '' }}"
+        />
+
+        <label for="end_date">To:</label>
+        <input
+          type="date"
+          id="end_date"
+          name="end_date"
+          value="{{ end_date if end_date else '' }}"
+        />
+
+        <button type="submit" class="cart-btn">Apply Filter</button>
+        {% if start_date or end_date %}
+        <a href="{{ url_for('retailer_dashboard') }}" class="cart-btn clear-btn"
+          >Clear Filter</a
+        >
+        <a
+          href="{{ url_for('download_sales_report', start_date=start_date, end_date=end_date) }}"
+          class="btn"
+          style="margin-left: 10px"
+        >
+          Download PDF Report
+        </a>
+        {% endif %}
+      </form>
+    </div>
+    {% if start_date or end_date %}
+    <div class="sales-summary">
+      <div class="summary-item">
+        <h3>Total Sales</h3>
+        <div class="summary-value">₹{{ "%.2f"|format(total_sales) }}</div>
+      </div>
+      <div class="summary-item">
+        <h3>Items Sold</h3>
+        <div class="summary-value">{{ total_items_sold }}</div>
+      </div>
+    </div>
+    {% endif %}
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity Sold</th>
+          <th>Total Revenue (₹)</th>
+          <th>Transactions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in sales_data %}
+        <tr>
+          <td>{{ item.product_name }}</td>
+          <td>{{ item.total_quantity }}</td>
+          <td>{{ "%.2f"|format(item.total_sales) }}</td>
+          <td>{{ item.transaction_count }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4">
+            No sales data found {% if start_date or end_date %}for selected
+            period{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Your Invoices</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice ID</th>
+          <!-- <th>Product</th> -->
+          <!-- <th>Supplier</th> -->
+          <th>Quantity</th>
+          <th>Total Price (₹)</th>
+          <th>Address</th>
+          <th>Date</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for invoice in invoices %}
+        <tr>
+          <td>{{ invoice.invoice_id }}</td>
+          <!-- <td>{{ invoice.product_name }}</td> -->
+          <!-- <td>{{ invoice.supplier_name }}</td> -->
+          <td>{{ invoice.quantity }}</td>
+          <td>{{ invoice.total_price }}</td>
+          <td>{{ invoice.address }}</td>
+          <td>{{ invoice.created_at }}</td>
+          <td>
+            <a
+              href="{{ url_for('download_invoice', invoice_id=invoice.invoice_id) }}"
+              class="btn"
+            >
+              Download
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8">No invoices found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <section class="notifications" id="notifications">
+      <h2>Notifications</h2>
+      <ul>
+        {% for note in notifications %}
+        <li>
+          {{ note.message }}
+          <small>({{ note.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})</small>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  </body>
+</html>

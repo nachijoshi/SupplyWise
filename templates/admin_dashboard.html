@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #ff9900;
+            --dark-color: #131921;
+            --bg-color: #f4f6fa;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+    
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+    
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: #333;
+        }
+    
+        .navbar {
+            background-color: var(--dark-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+    
+        .navbar h1 {
+            font-size: 28px;
+        }
+    
+        .navbar a {
+            background-color: var(--primary-color);
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+        }
+    
+        .navbar a:hover {
+            background-color: #e68a00;
+        }
+    
+        .container {
+            padding: 40px;
+        }
+    
+        h2 {
+            color: var(--dark-color);
+            margin: 40px 0 20px;
+            border-left: 6px solid var(--primary-color);
+            padding-left: 12px;
+        }
+    
+        table {
+            width: 100%;
+            margin-bottom: 40px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    
+        th {
+            background-color: var(--dark-color);
+            color: white;
+        }
+    
+        .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--glass-bg);
+    color: #000;
+    border-left: 6px solid var(--primary-color);
+    padding: 18px 24px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    z-index: 999;
+    min-width: 280px;
+    animation: slideDown 0.5s ease, fadeOut 0.5s ease 3.5s forwards;
+}
+
+.toast .close-btn {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+}
+
+@keyframes slideDown {
+    from { top: -50px; opacity: 0; }
+    to { top: 20px; opacity: 1; }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-20px); }
+}
+    
+        ul {
+            list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 100%;
+        }
+    
+        ul li a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+    
+        ul li a:hover {
+            color: #e68a00;
+            text-decoration: underline;
+        }
+    
+        p {
+            margin-top: 15px;
+            font-style: italic;
+            color: #555;
+        }
+    
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+    
+            .navbar div {
+                margin-top: 10px;
+            }
+    
+            .container {
+                padding: 20px;
+            }
+    
+            table {
+                font-size: 14px;
+            }
+        }
+        .navbar-link {
+    background-color: var(--primary-color);
+    color: black;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+.navbar-link:hover {
+    background-color: #e68a00;
+}
+
+.nav-links a {
+            background-color: var(--primary-color);
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+    </style>    
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>Admin Dashboard</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('login') }}">Logout</a>
+        </div>
+    </div>
+    
+    <!-- Flash Message Toast -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="toast" id="toast">
+          {{ message }}
+          <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
+    
+    <div class="container">
+        <section>
+            <h2>Admin Actions</h2>
+            <ul>
+                <li><a href="{{ url_for('register') }}" class="navbar-link">Register User</a></li>
+                <li><a href="#" onclick="toggleSection('customersSection')" class="navbar-link">View Customers</a></li>
+                <li><a href="#" onclick="toggleSection('suppliersSection')" class="navbar-link">View Suppliers</a></li>
+                <li><a href="#" onclick="toggleSection('transportersSection')" class="navbar-link">View Transporters</a></li>
+                <li><a href="#" onclick="toggleSection('retailersSection')" class="navbar-link">View Retailers</a></li>
+                <li><a href="#" onclick="toggleSection('logsSection')" class="navbar-link">View Activity Logs</a></li>
+                <li><a href="#" onclick="toggleSection('inventorySection')" class="navbar-link">View Inventory</a></li>
+                <li><a href="#" onclick="toggleSection('productsSection')" class="navbar-link">View Products</a></li>
+                <li><a href="#" onclick="toggleSection('custTxnSection')" class="navbar-link">View Customer Transactions</a></li>
+                <li><a href="#" onclick="toggleSection('retTxnSection')" class="navbar-link">View Retailer Transactions</a></li>
+            </ul>
+        </section>
+    
+        <hr>
+    
+        <section>
+            <h2>All Users</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    
+        <section id="customersSection" style="display: none;">
+            <h2>Customers</h2>
+            <table>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.customer_id }}</td>
+                    <td>{{ customer.username }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.phone }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    
+        <section id="suppliersSection" style="display: none;">
+            <h2>Suppliers</h2>
+            <table>
+                <tr>
+                    <th>Supplier ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>{{ supplier.supplier_id }}</td>
+                    <td>{{ supplier.username }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.phone }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    
+        <section id="transportersSection" style="display: none;">
+            <h2>Transporters</h2>
+            <table>
+                <tr>
+                    <th>Transporter ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+                {% for transporter in transporters %}
+                <tr>
+                    <td>{{ transporter.transporter_id }}</td>
+                    <td>{{ transporter.username }}</td>
+                    <td>{{ transporter.email }}</td>
+                    <td>{{ transporter.phone }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    
+        <section id="retailersSection" style="display: none;">
+            <h2>Retailers</h2>
+            <table>
+                <tr>
+                    <th>Retailer ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+                {% for retailer in retailers %}
+                <tr>
+                    <td>{{ retailer.retailer_id }}</td>
+                    <td>{{ retailer.username }}</td>
+                    <td>{{ retailer.email }}</td>
+                    <td>{{ retailer.phone }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    
+        <section id="logsSection" style="display: none;">
+            <h2>Recent Activity Logs</h2>
+            {% if logs %}
+            <table>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Event Name</th>
+                    <th>Affected Table</th>
+                    <th>Performed By</th>
+                    <th>Role</th>
+                </tr>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.event_name }}</td>
+                    <td>{{ log.affected_table }}</td>
+                    <td>{{ log.username }}</td>
+                    <td>{{ log.role }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No recent logs available.</p>
+            {% endif %}
+        </section>
+    
+        <section id="inventorySection" style="display: none;">
+            <h2>Inventory List</h2>
+            {% if inventory %}
+            <table>
+                <tr>
+                    <th>Inventory ID</th>
+                    <th>Product Name</th>
+                    <th>Company</th>
+                    <th>Category</th>
+                    <th>Stock Quantity</th>
+                    <th>Price</th>
+                    <th>Owner</th>
+                    <th>Owner Role</th>
+                </tr>
+                {% for item in inventory %}
+                <tr>
+                    <td>{{ item.inventory_id }}</td>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.company }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.stock_qty }}</td>
+                    <td>{{ item.sell_price }}</td>
+                    <td>{{ item.owner }}</td>
+                    <td>{{ item.owner_role }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No inventory items found.</p>
+            {% endif %}
+        </section>
+    
+        <section id="productsSection" style="display: none;">
+            <h2>Product List</h2>
+            {% if products %}
+            <table>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                </tr>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.product_id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.company }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.description }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No products available.</p>
+            {% endif %}
+        </section>
+    
+        <section id="custTxnSection" style="display: none;">
+            <h2>Retailer-Customer Transactions</h2>
+            {% if customer_transactions %}
+            <table>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                    <th>Timestamp</th>
+                </tr>
+                {% for txn in customer_transactions %}
+                <tr>
+                    <td>{{ txn.transaction_id }}</td>
+                    <td>{{ txn.customer_name }}</td>
+                    <td>{{ txn.product_name }}</td>
+                    <td>{{ txn.quantity }}</td>
+                    <td>{{ txn.total_amount }}</td>
+                    <td>{{ txn.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No customer transactions found.</p>
+            {% endif %}
+        </section>
+    
+        <section id="retTxnSection" style="display: none;">
+            <h2>Supplier-Retailer Transactions</h2>
+            {% if retailer_transactions %}
+            <table>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Retailer</th>
+                    <th>Supplier</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                    <th>Timestamp</th>
+                </tr>
+                {% for txn in retailer_transactions %}
+                <tr>
+                    <td>{{ txn.transaction_id }}</td>
+                    <td>{{ txn.retailer_name }}</td>
+                    <td>{{ txn.supplier_name }}</td>
+                    <td>{{ txn.product_name }}</td>
+                    <td>{{ txn.quantity }}</td>
+                    <td>{{ txn.total_amount }}</td>
+                    <td>{{ txn.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No retailer-supplier transactions found.</p>
+            {% endif %}
+        </section>
+    </div>
+    
+    <script>
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.style.display = section.style.display === "none" ? "block" : "none";
+        }
+    </script>
+    
+    </body>    
+</html>

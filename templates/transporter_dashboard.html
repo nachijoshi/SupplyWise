@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transporter Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #ff9900;
+      --dark-color: #131921;
+      --bg-color: #f4f6fa;
+      --glass-bg: rgba(255, 255, 255, 0.8);
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      color: #333;
+    }
+
+    .top-bar {
+      background-color: var(--dark-color);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-bar h1 {
+      font-size: 28px;
+    }
+
+    .logout-btn {
+      background-color: var(--primary-color);
+      color: black;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      margin-left: 10px;
+    }
+
+    .logout-btn:hover {
+      background-color: #e68a00;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--glass-bg);
+      color: #000;
+      border-left: 6px solid var(--primary-color);
+      padding: 18px 24px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      z-index: 999;
+      min-width: 280px;
+    }
+
+    .toast .close-btn {
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #000;
+    }
+
+    h2 {
+      color: var(--dark-color);
+      margin: 40px 0 20px 40px;
+      border-left: 6px solid var(--primary-color);
+      padding-left: 12px;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto 40px;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: var(--shadow);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--dark-color);
+      color: white;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+      }
+
+      .top-bar div {
+        margin-top: 10px;
+      }
+
+      table {
+        width: 95%;
+      }
+    }
+    /* Dropdown + Button Styling for Status Update */
+.status-form select {
+  background-color: white;
+  color: #333;
+  padding: 8px 12px;
+  border: 2px solid var(--primary-color);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.status-form select:hover,
+.status-form select:focus {
+  border-color: #e68a00;
+  outline: none;
+}
+
+.status-form button {
+  background-color: var(--primary-color);
+  color: #000;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.status-form button:hover {
+  background-color: #e68a00;
+}
+  </style>
+</head>
+<body>
+
+    <div class="top-bar">
+      <h1>Welcome, Transporter</h1>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+  
+    <!-- Flash Message Toast -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="toast" id="toast">
+            {{ message }}
+            <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  
+    <h2>Supplier to Retailer Orders</h2>
+    <table>
+      <tr>
+        <th>ID</th><th>Supplier</th><th>Retailer</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th><th>Date</th>
+      </tr>
+      {% for order in sr_orders %}
+      <tr>
+        <td>{{ order[0] }}</td>
+        <td>{{ order[1] }}</td>
+        <td>{{ order[2] }}</td>
+        <td>{{ order[3] }}</td>
+        <td>{{ order[4] }}</td>
+        <td>{{ order[5] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('update_status') }}" class="status-form">
+            <input type="hidden" name="transaction_id" value="{{ order[0] }}">
+            <input type="hidden" name="table_type" value="sr">
+            <select name="status" onchange="this.form.submit()">
+              <option disabled {{ 'selected' if order[6] not in ['shipped', 'delivered'] else '' }}>{{ order[6] }}</option>
+              <option value="shipped" {% if order[6] == 'shipped' %}selected{% endif %}>Shipped</option>
+              <option value="delivered" {% if order[6] == 'delivered' %}selected{% endif %}>Delivered</option>
+            </select>
+          </form>
+        </td>
+        <td>{{ order[7] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  
+    <h2>Retailer to Customer Orders</h2>
+    <table>
+      <tr>
+        <th>ID</th><th>Retailer</th><th>Customer</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th><th>Date</th>
+      </tr>
+      {% for order in rc_orders %}
+      <tr>
+        <td>{{ order[0] }}</td>
+        <td>{{ order[1] }}</td>
+        <td>{{ order[2] }}</td>
+        <td>{{ order[3] }}</td>
+        <td>{{ order[4] }}</td>
+        <td>{{ order[5] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('update_status') }}" class="status-form">
+            <input type="hidden" name="transaction_id" value="{{ order[0] }}">
+            <input type="hidden" name="table_type" value="rc">
+            <select name="status" onchange="this.form.submit()">
+              <option disabled {{ 'selected' if order[6] not in ['shipped', 'delivered'] else '' }}>{{ order[6] }}</option>
+              <option value="shipped" {% if order[6] == 'shipped' %}selected{% endif %}>Shipped</option>
+              <option value="delivered" {% if order[6] == 'delivered' %}selected{% endif %}>Delivered</option>
+            </select>
+          </form>
+        </td>
+        <td>{{ order[7] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  
+  </body>
+  </html>
+  

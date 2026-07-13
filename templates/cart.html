@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart</title>
+    <style>
+        :root {
+            --primary-color: #ff9900;
+            --dark-color: #131921;
+            --bg-color: #f4f6fa;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: #333;
+        }
+
+        .top-bar {
+            background-color: var(--dark-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .top-bar h1 {
+            font-size: 28px;
+        }
+
+        .nav-links a {
+            background-color: var(--primary-color);
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #e68a00;
+        }
+
+        .flash-messages {
+            margin: 30px;
+        }
+
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+        }
+
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--dark-color);
+            color: white;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: black;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e68a00;
+        }
+
+        .modal {
+            margin: 40px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 20px 40px;
+            text-decoration: none;
+            color: white;
+            background-color: #6c757d;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .nav-links {
+                margin-top: 10px;
+            }
+
+            table, .modal {
+                width: 95%;
+            }
+
+            th, td {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <h1>Your Cart</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if cart_items %}
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price (₹)</th>
+                <th>Quantity</th>
+                <th>Total (₹)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set ns = namespace(grand_total=0) %}
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price * item.quantity }}</td>
+                {% set ns.grand_total = ns.grand_total + (item.price * item.quantity) %}
+                <td class="actions">
+                    <form method="POST" action="{{ url_for('remove_from_cart') }}">
+                        <input type="hidden" name="cart_id" value="{{ item.cart_id }}">
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="3">Grand Total</td>
+                <td colspan="2">₹{{ ns.grand_total }}</td>
+            </tr>            
+        </tbody>
+    </table>
+
+    <div class="modal">
+        <form method="GET" action="{{ url_for('payment') }}">
+            <button type="submit">Confirm Purchase</button>
+        </form>
+    </div>
+
+    {% else %}
+        <p style="margin: 40px; font-size: 18px;">🛒 Your cart is empty. Start shopping now!</p>
+    {% endif %}
+
+    {% if session['role'] == 'retailer' %}
+        <a href="{{ url_for('retailer_dashboard') }}" class="back-link">← Back to Inventory</a>
+    {% elif session['role'] == 'customer' %}
+        <a href="{{ url_for('customer_dashboard') }}" class="back-link">← Back to Inventory</a>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #232f3e, #0a8d48);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    h2 {
+      color: #232f3e;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    img {
+      margin: 20px 0;
+      width: 200px;
+      height: 200px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      resize: none;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #0a8d48;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #076c37;
+      transform: scale(1.03);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    label {
+      font-weight: bold;
+      color: #232f3e;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Scan to Pay</h2>
+    <p><strong>Amount:</strong> ₹{{ amount }}</p>
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?data={{ qr_data }}&size=200x200"
+      alt="UPI QR Code"
+    />
+    <p>Use any UPI app to complete the payment</p>
+
+    <form method="POST" action="{{ url_for('buy_item') }}">
+      <input type="hidden" name="amount" value="{{ amount }}">
+      <label for="address">Enter Delivery Address:</label><br />
+      <textarea name="address" rows="4" required placeholder="Enter complete delivery address..."></textarea><br />
+      <button type="submit">Confirm Purchase</button>
+    </form>
+  </div>
+</body>
+</html>
