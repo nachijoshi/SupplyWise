@@ -163,3 +163,6 @@ SupplyWise/
     ├── supplier_dashboard.html
     └── transporter_dashboard.html
 ```
+## Demo
+
+🎥 https://youtu.be/F_g9oEaK1sc
